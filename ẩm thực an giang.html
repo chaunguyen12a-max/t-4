@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám Phá Ẩm Thực An Giang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           1. CSS VARIABLES & THEME SETUP
+           ========================================= */
+        :root {
+            /* Light Theme */
+            --bg-color: #ffffff;
+            --bg-alt: #f8f9fa;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --primary: #d97706; /* Cam đất đặc trưng ẩm thực */
+            --primary-hover: #b45309;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-color: #e5e7eb;
+            --overlay: rgba(0, 0, 0, 0.7);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark-mode {
+            /* Dark Theme */
+            --bg-color: #111827;
+            --bg-alt: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #d1d5db;
+            --nav-bg: rgba(17, 24, 39, 0.95);
+            --card-bg: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            --border-color: #4b5563;
+        }
+
+        /* =========================================
+           2. RESET & GLOBAL STYLES
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        body.no-scroll {
+            overflow: hidden; /* Dùng khi hiện modal hoặc loader */
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            outline: none;
+            background: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        section {
+            padding: 5rem 0;
+        }
+
+        /* Utility classes for Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           3. LOADING SCREEN
+           ========================================= */
+        #loader-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loader-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 2px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* =========================================
+           4. NAVBAR (STICKY)
+           ========================================= */
+        header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background-color: transparent;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        header.sticky {
+            background-color: var(--nav-bg);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        header:not(.sticky) .logo {
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        header:not(.sticky) .nav-links a {
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 0; height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        header:not(.sticky) .theme-toggle {
+            color: #fff;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 2rem;
+            background: none;
+            border: none;
+            color: inherit;
+        }
+        
+        header:not(.sticky) .hamburger { color: #fff; }
+
+        /* =========================================
+           5. HERO SECTION
+           ========================================= */
+        .hero {
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #ffffff;
+            padding: 0; /* Override section padding */
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: slideDown 1s ease forwards;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2.5rem;
+            animation: slideUp 1s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #fff;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(217, 119, 6, 0.4);
+        }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================
+           6. FEATURED FOOD SECTION (Cards)
+           ========================================= */
+        .featured-foods {
+            background-color: var(--bg-alt);
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .food-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .food-img-wrapper {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .food-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .food-card:hover .food-img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .food-rating {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #fbbf24;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 2;
+        }
+
+        .food-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .food-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .btn-outline {
+            display: inline-block;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        /* =========================================
+           7. CULTURE SECTION
+           ========================================= */
+        .culture-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .culture-img {
+            flex: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .culture-img img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.5s ease;
+        }
+
+        .culture-img:hover img {
+            transform: scale(1.05);
+        }
+
+        .culture-text {
+            flex: 1;
+        }
+
+        .culture-text h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .culture-text p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: justify;
+        }
+
+        /* =========================================
+           8. STATISTICS SECTION (Counter)
+           ========================================= */
+        .statistics {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1596622527582-7f72ebce3165?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            color: #fff;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .stat-item h2 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           9. TIMELINE SECTION
+           ========================================= */
+        .history-timeline {
+            background-color: var(--bg-alt);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--primary);
+            top: 0; bottom: 0; left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+
+        .timeline-item.left { left: 0; }
+        .timeline-item.right { left: 50%; }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            right: -10px;
+            background-color: var(--bg-color);
+            border: 4px solid var(--primary);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item.right::after {
+            left: -10px;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .timeline-content h3 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* =========================================
+           10. IMAGE GALLERY
+           ========================================= */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            height: 250px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .gallery-overlay span {
+            color: #fff;
+            font-size: 2rem;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* =========================================
+           11. MAP SECTION (FAKE)
+           ========================================= */
+        .map-section {
+            background-color: var(--bg-alt);
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .map-overlay-text {
+            position: absolute;
+            top: 20px; left: 20px;
+            background: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+
+        .marker {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px; height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            animation: bounce 2s infinite ease-in-out;
+            cursor: pointer;
+        }
+
+        .marker::before {
+            content: 'Châu Đốc, An Giang';
+            position: absolute;
+            top: -35px; left: 50%;
+            transform: translateX(-50%);
+            background: #000; color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .marker:hover::before { opacity: 1; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -70%); }
+        }
+
+        /* =========================================
+           12. CONTACT SECTION
+           ========================================= */
+        .contact-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: #fff;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #form-message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .success-msg { color: #10b981; }
+
+        /* =========================================
+           13. FOOTER
+           ========================================= */
+        footer {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 60px 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .footer-col h4::after {
+            content: '';
+            position: absolute; left: 0; bottom: 0;
+            width: 40px; height: 2px;
+            background: var(--primary);
+        }
+
+        .footer-col p, .footer-col li {
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        /* =========================================
+           14. MODALS (Popup) & BACK TO TOP
+           ========================================= */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--overlay);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover { color: var(--primary); }
+
+        /* Specific styles for Food Modal */
+        #modal-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .modal-body h4 {
+            margin-top: 20px;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+        
+        .modal-body p {
+            color: var(--text-muted);
+            text-align: justify;
+        }
+
+        /* Fullscreen Image Modal */
+        .gallery-modal-content {
+            max-width: 90vw;
+            background: transparent;
+            box-shadow: none;
+            display: flex;
+            justify-content: center;
+        }
+        .gallery-modal-content img {
+            max-height: 85vh;
+            border-radius: 10px;
+        }
+
+        /* Back to top button */
+        #back-to-top {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            width: 50px; height: 50px;
+            background-color: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            opacity: 0; visibility: hidden;
+            transition: var(--transition);
+            z-index: 900;
+        }
+
+        #back-to-top.show {
+            opacity: 1; visibility: visible;
+        }
+
+        #back-to-top:hover {
+            transform: translateY(-5px);
+            background-color: var(--primary-hover);
+        }
+
+        /* =========================================
+           15. RESPONSIVE DESIGN
+           ========================================= */
+        @media screen and (max-width: 992px) {
+            .culture-wrapper { flex-direction: column; }
+            .timeline::after { left: 31px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .timeline-item.right { left: 0%; }
+            .timeline-item.left::after, .timeline-item.right::after { left: 21px; }
+        }
+
+        @media screen and (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .stats-grid { grid-template-columns: 1fr; gap: 40px; }
+            
+            /* Hamburger Menu logic */
+            .hamburger { display: block; }
+            .nav-links {
+                position: fixed;
+                top: 80px; left: -100%;
+                width: 100%; height: calc(100vh - 80px);
+                background-color: var(--nav-bg);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 50px;
+                transition: 0.4s ease-in-out;
+            }
+            .nav-links.active { left: 0; }
+            header:not(.sticky) .nav-links.active a { color: var(--text-main); text-shadow: none; }
+        }
+
+        @media screen and (max-width: 480px) {
+            .hero h1 { font-size: 2.2rem; }
+            .section-title { font-size: 2rem; }
+            .modal-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body class="no-scroll">
+
+    <div id="loader-wrapper">
+        <div class="spinner"></div>
+        <div class="loader-text">ẨM THỰC AN GIANG</div>
+    </div>
+
+    <header id="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">AnGiang<span style="color: var(--text-main);">Food</span></a>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home" class="nav-link">Trang chủ</a></li>
+                <li><a href="#foods" class="nav-link">Món ăn</a></li>
+                <li><a href="#culture" class="nav-link">Văn hóa</a></li>
+                <li><a href="#gallery" class="nav-link">Thư viện</a></li>
+                <li><a href="#contact" class="nav-link">Liên hệ</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" title="Chuyển giao diện">🌙</button>
+                <button class="hamburger" id="hamburger">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>Ẩm Thực An Giang</h1>
+                <p>Khám phá hương vị miền Tây dân dã, độc đáo và đậm đà bản sắc vùng Bảy Núi.</p>
+                <a href="#foods" class="btn-primary">Khám phá ngay</a>
+            </div>
+        </section>
+
+        <section id="foods" class="featured-foods reveal">
+            <div class="container">
+                <h2 class="section-title">Đặc Sản Nổi Bật</h2>
+                <div class="food-grid">
+                    <div class="food-card">
+                        <div class="food-img-wrapper">
+                            <span class="food-rating">4.8 ⭐</span>
+                            <img src="https://images.unsplash.com/photo-1582878826629-29b7ad1cb431?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bún cá Châu Đốc">
+                        </div>
+                        <div class="food-info">
+                            <h3>Bún cá Châu Đốc</h3>
+                            <p>Món ăn trứ danh với nước lèo ngải bún vàng ươm, cá lóc đồng ngọt thịt và bông điên điển.</p>
+                            <button class="btn-outline btn-detail" 
+                                data-name="Bún cá Châu Đốc" 
+                                data-img="https://images.unsplash.com/photo-1582878826629-29b7ad1cb431?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                                data-desc="Bún cá Châu Đốc là linh hồn của ẩm thực An Giang. Nước lèo được nấu từ ngải bún tạo màu vàng nghệ đặc trưng và hương vị thơm lừng khó cưỡng."
+                                data-origin="Xuất phát từ vùng đất Châu Đốc, An Giang, pha trộn văn hóa ẩm thực người Khmer và người Việt."
+                                data-recipe="Cá lóc đồng luộc gỡ xương xào nghệ. Nước lèo hầm từ xương, nêm mắm ruốc chắt lấy nước trong, thêm ngải bún dập dập. Ăn kèm bắp chuối, rau muống, bông điên điển.">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                    <div class="food-card">
+                        <div class="food-img-wrapper">
+                            <span class="food-rating">4.9 ⭐</span>
+                            <img src="https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lẩu mắm">
+                        </div>
+                        <div class="food-info">
+                            <h3>Lẩu mắm</h3>
+                            <p>Sự hòa quyện tuyệt vời của mắm cá sặc, cá linh cùng hàng chục loại rau đồng miền Tây.</p>
+                            <button class="btn-outline btn-detail" 
+                                data-name="Lẩu mắm An Giang" 
+                                data-img="https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                                data-desc="Món lẩu hội tụ tinh hoa sông nước miền Tây. Vị mắm đậm đà, kết hợp hải sản, thịt ba rọi và mâm rau hoành tráng."
+                                data-origin="Đặc sản lâu đời của vùng đồng bằng sông Cửu Long, đặc biệt ngon tại Châu Đốc nhờ nguồn mắm phong phú."
+                                data-recipe="Nấu rã mắm cá linh/cá sặc lọc lấy nước cốt. Hầm chung nước dừa tươi, sả băm, thịt ba chỉ, cá hú. Nhúng các loại rau đắng, điên điển, súng, kèo nèo.">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                    <div class="food-card">
+                        <div class="food-img-wrapper">
+                            <span class="food-rating">4.7 ⭐</span>
+                            <img src="https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gà đốt Ô Thum">
+                        </div>
+                        <div class="food-info">
+                            <h3>Gà đốt Ô Thum</h3>
+                            <p>Gà đồi tẩm ướp lá chúc rừng, đốt trong nồi đất cho da giòn, thịt mọng nước và dậy mùi thơm.</p>
+                            <button class="btn-outline btn-detail" 
+                                data-name="Gà đốt hồ Ô Thum" 
+                                data-img="https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                                data-desc="Món ngon nức tiếng vùng Bảy Núi. Vị chua thanh, the the của lá chúc (chanh sác) hòa quyện cùng thịt gà đồi săn chắc."
+                                data-origin="Nguồn gốc từ đồng bào Khmer vùng Bảy Núi (Tri Tôn, An Giang)."
+                                data-recipe="Gà làm sạch ướp muối sả, ớt, tỏi và đặc biệt là lá chúc. Xếp xả lót đáy nồi đất, đặt gà vào đậy kín, đốt lửa lớn rồi riu riu đến khi gà chín vàng.">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                    <div class="food-card">
+                        <div class="food-img-wrapper">
+                            <span class="food-rating">4.6 ⭐</span>
+                            <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tung lò mò">
+                        </div>
+                        <div class="food-info">
+                            <h3>Tung Lò Mò (Lạp xưởng bò)</h3>
+                            <p>Đặc sản của người Chăm An Giang, làm từ thịt bò hảo hạng, nướng than hoa thơm lừng.</p>
+                            <button class="btn-outline btn-detail" 
+                                data-name="Tung Lò Mò" 
+                                data-img="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                                data-desc="Còn gọi là lạp xưởng bò. Có vị chua nhẹ đặc trưng do quá trình lên men tự nhiên, ăn không bị ngấy như lạp xưởng heo."
+                                data-origin="Món ăn truyền thống của đồng bào Chăm theo đạo Hồi ở An Giang."
+                                data-recipe="Thịt bò vụn xay nhuyễn trộn mỡ bò, tiêu, tỏi, cơm nguội để tạo độ chua. Dồn vào ruột bò phơi nắng, khi ăn nướng trên bếp than.">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                    <div class="food-card">
+                        <div class="food-img-wrapper">
+                            <span class="food-rating">4.8 ⭐</span>
+                            <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bánh bò thốt nốt">
+                        </div>
+                        <div class="food-info">
+                            <h3>Bánh bò thốt nốt</h3>
+                            <p>Bánh xốp mềm, rễ tre, màu vàng nâu ươm và vị ngọt thanh đặc trưng của đường thốt nốt nguyên chất.</p>
+                            <button class="btn-outline btn-detail" 
+                                data-name="Bánh bò thốt nốt" 
+                                data-img="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                                data-desc="Món tráng miệng, ăn vặt ngọt ngào mang đậm hương vị cây thốt nốt - biểu tượng của vùng đất An Giang."
+                                data-origin="Đặc sản truyền thống của người Khmer vùng Tri Tôn, Tịnh Biên."
+                                data-recipe="Gạo xay thành bột ủ lên men, trộn với đường thốt nốt đun chảy và nước cốt dừa. Hấp chín trong khuôn. Ăn kèm nước cốt dừa sến đặc.">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                    <div class="food-card">
+                        <div class="food-img-wrapper">
+                            <span class="food-rating">4.5 ⭐</span>
+                            <img src="https://images.unsplash.com/photo-1605333396914-231362032488?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bánh phồng Phú Mỹ">
+                        </div>
+                        <div class="food-info">
+                            <h3>Bánh phồng Phú Mỹ</h3>
+                            <p>Bánh nướng lên nở to, xốp, giòn rụm, ngọt béo vị nếp sữa và nước cốt dừa.</p>
+                            <button class="btn-outline btn-detail" 
+                                data-name="Bánh phồng Phú Mỹ" 
+                                data-img="https://images.unsplash.com/photo-1605333396914-231362032488?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                                data-desc="Làng nghề bánh phồng Phú Mỹ đã có tuổi đời hàng trăm năm. Bánh nhỏ bằng lòng bàn tay nhưng khi nướng nở to như cái đĩa."
+                                data-origin="Làng nghề truyền thống tại thị trấn Phú Mỹ, huyện Phú Tân, An Giang."
+                                data-recipe="Nếp rặt ngâm mềm xôi chín, quết nhuyễn cùng đường, sữa, cốt dừa, mè. Cán mỏng phơi nắng. Nướng bằng rơm hoặc than hoa.">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="culture" class="culture reveal">
+            <div class="container culture-wrapper">
+                <div class="culture-img">
+                    <img src="https://images.unsplash.com/photo-1583033785265-27be4d634289?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Văn hóa ẩm thực An Giang">
+                </div>
+                <div class="culture-text">
+                    <h2 class="section-title" style="text-align: left;">Sự Giao Thoa Văn Hóa</h2>
+                    <p>An Giang là vùng đất hội tụ đa dạng sắc tộc, nơi chung sống hòa bình của 4 dân tộc: Kinh, Hoa, Chăm, Khmer. Chính điều này đã tạo nên một bức tranh ẩm thực vô cùng phong phú và độc đáo.</p>
+                    <p>Nếu người Kinh mang đến những món mắm đồng quê, người Hoa nổi tiếng với các loại hủ tiếu, mì, thì người Khmer lại đóng góp hương vị đặc trưng của đường thốt nốt, trái chúc, còn người Chăm làm say lòng thực khách bằng món tung lò mò nức tiếng.</p>
+                    <p>Tất cả hòa quyện, tạo nên "Vương quốc mắm" và những món ngon không thể tìm thấy ở bất kỳ nơi nào khác trên dải đất hình chữ S.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="stats" class="statistics reveal">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h2 class="counter" data-target="50">0</h2><span>+</span>
+                        <p>Món ăn đặc sản</p>
+                    </div>
+                    <div class="stat-item">
+                        <h2 class="counter" data-target="120">0</h2><span>+</span>
+                        <p>Nhà hàng địa phương</p>
+                    </div>
+                    <div class="stat-item">
+                        <h2 class="counter" data-target="10000">0</h2><span>+</span>
+                        <p>Du khách mỗi tháng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="history-timeline reveal">
+            <div class="container">
+                <h2 class="section-title">Lịch Sử Cây Cầu Ẩm Thực</h2>
+                <div class="timeline">
+                    <div class="timeline-item left reveal">
+                        <div class="timeline-content">
+                            <h3>Thế kỷ 19</h3>
+                            <p>Người Kinh tiến vào khai hoang vùng Bảy Núi, hình thành các xóm làng, sáng tạo ra các món ăn từ nguồn lợi thủy sản dồi dào, đánh dấu sự ra đời của các loại mắm trứ danh.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right reveal">
+                        <div class="timeline-content">
+                            <h3>Những năm 1900</h3>
+                            <p>Sự giao thương tấp nập tại biên giới Châu Đốc kết hợp văn hóa người Khmer và Hoa, hoàn thiện món Bún cá Châu Đốc mang hương vị ngải bún đặc trưng.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item left reveal">
+                        <div class="timeline-content">
+                            <h3>Giữa thế kỷ 20 (1950s)</h3>
+                            <p>Cộng đồng người Chăm tại An Giang phát triển mạnh các món ăn Halal, đặc biệt là Tung Lò Mò (Lạp xưởng bò) trở thành món ăn giao lưu văn hóa đặc sắc.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right reveal">
+                        <div class="timeline-content">
+                            <h3>Năm 2020 - Nay</h3>
+                            <p>Ẩm thực An Giang vươn tầm, các đặc sản như Gà đốt Ô Thum, Bánh bò thốt nốt thu hút hàng vạn food blogger và du khách khắp nơi đổ về trải nghiệm.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="gallery reveal">
+            <div class="container">
+                <h2 class="section-title">Thư Viện Ảnh</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item" data-img="https://images.unsplash.com/photo-1548943487-a2e4d43b4853?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80">
+                        <img src="https://images.unsplash.com/photo-1548943487-a2e4d43b4853?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Chợ nổi">
+                        <div class="gallery-overlay"><span>🔍</span></div>
+                    </div>
+                    <div class="gallery-item" data-img="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80">
+                        <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Chợ Châu Đốc">
+                        <div class="gallery-overlay"><span>🔍</span></div>
+                    </div>
+                    <div class="gallery-item" data-img="https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80">
+                        <img src="https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Đồng lúa">
+                        <div class="gallery-overlay"><span>🔍</span></div>
+                    </div>
+                    <div class="gallery-item" data-img="https://images.unsplash.com/photo-1621217646535-61262d294025?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80">
+                        <img src="https://images.unsplash.com/photo-1621217646535-61262d294025?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Rừng tràm Trà Sư">
+                        <div class="gallery-overlay"><span>🔍</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="map" class="reveal">
+            <div class="container">
+                <h2 class="section-title">Bản Đồ Ẩm Thực</h2>
+                <div class="map-container">
+                    <div class="map-overlay-text">Bản đồ vị trí các quán ăn nổi tiếng</div>
+                    <div class="marker"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact reveal">
+            <div class="container">
+                <h2 class="section-title">Góp Ý & Liên Hệ</h2>
+                <div class="contact-wrapper">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Họ và tên</label>
+                            <input type="text" id="name" class="form-control" placeholder="Nhập họ tên của bạn" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="Nhập địa chỉ email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Nội dung</label>
+                            <textarea id="message" class="form-control" placeholder="Bạn muốn chia sẻ điều gì?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Gửi thông điệp</button>
+                        <div id="form-message" class="success-msg">Gửi thành công! Cảm ơn bạn đã đóng góp.</div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Về Dự Án</h4>
+                    <p>Trang web quảng bá du lịch và ẩm thực vùng đất An Giang. Được thiết kế nhằm mục đích giới thiệu nét đẹp văn hóa đến du khách gần xa.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liên Hệ Nhanh</h4>
+                    <ul>
+                        <li>Email: info@amthucangiang.vn</li>
+                        <li>Hotline: 0123 456 789</li>
+                        <li>Địa chỉ: TP. Long Xuyên, An Giang</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Thông Tin Sinh Viên</h4>
+                    <ul>
+                        <li><strong>Họ tên:</strong> Nguyễn Văn A</li>
+                        <li><strong>Lớp:</strong> CNTT-K20</li>
+                        <li><strong>Môn học:</strong> Lập trình Web Frontend</li>
+                        <li><strong>Năm học:</strong> 2023 - 2024</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2024 Dự án Ẩm Thực An Giang. Thiết kế bởi Nguyễn Văn A (Demo Portfolio).
+            </div>
+        </div>
+    </footer>
+
+    <div id="food-modal" class="modal">
+        <button class="close-btn" id="close-food-modal">✖</button>
+        <div class="modal-content">
+            <img id="modal-img" src="" alt="Món ăn">
+            <div class="modal-body">
+                <h2 id="modal-title">Tên món ăn</h2>
+                <p id="modal-desc">Mô tả ngắn về món ăn...</p>
+                
+                <h4>📍 Nguồn gốc:</h4>
+                <p id="modal-origin">Thông tin nguồn gốc...</p>
+                
+                <h4>🍳 Cách chế biến & Thưởng thức:</h4>
+                <p id="modal-recipe">Quy trình chế biến cơ bản...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="gallery-modal" class="modal">
+        <button class="close-btn" id="close-gallery-modal">✖</button>
+        <div class="gallery-modal-content">
+            <img id="gallery-full-img" src="" alt="Gallery Image">
+        </div>
+    </div>
+
+    <button id="back-to-top" title="Lên đầu trang">↑</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. Loading Screen Logic ---
+            const loader = document.getElementById('loader-wrapper');
+            // Mocking a 1.5s load time
+            setTimeout(() => {
+                if(loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.visibility = 'hidden';
+                        document.body.classList.remove('no-scroll');
+                    }, 500);
+                }
+            }, 1500);
+
+            // --- 2. Dark Mode Toggle ---
+            const themeBtn = document.getElementById('theme-toggle');
+            // Check local storage
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                if(themeBtn) themeBtn.textContent = '☀️';
+            }
+            if(themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    const isDark = document.body.classList.contains('dark-mode');
+                    themeBtn.textContent = isDark ? '☀️' : '🌙';
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                });
+            }
+
+            // --- 3. Mobile Hamburger Menu ---
+            const hamburger = document.getElementById('hamburger');
+            const navLinksMenu = document.getElementById('nav-links');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            if(hamburger && navLinksMenu) {
+                hamburger.addEventListener('click', () => {
+                    navLinksMenu.classList.toggle('active');
+                    hamburger.textContent = navLinksMenu.classList.contains('active') ? '✖' : '☰';
+                });
+
+                // Close menu when clicking a link
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinksMenu.classList.remove('active');
+                        hamburger.textContent = '☰';
+                    });
+                });
+            }
+
+            // --- 4. Sticky Navbar & Back to Top ---
+            const header = document.getElementById('header');
+            const backToTop = document.getElementById('back-to-top');
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                // Navbar
+                if(header) {
+                    if (scrollY > 50) header.classList.add('sticky');
+                    else header.classList.remove('sticky');
+                }
+                // Back to top
+                if(backToTop) {
+                    if (scrollY > 500) backToTop.classList.add('show');
+                    else backToTop.classList.remove('show');
+                }
+            });
+
+            if(backToTop) {
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- 5. Scroll Reveal Animation (Intersection Observer) ---
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Chạy 1 lần
+                    }
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+
+            // --- 6. Number Counter Animation ---
+            const counters = document.querySelectorAll('.counter');
+            let hasCounted = false;
+
+            const countUp = () => {
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const speed = 200; // Tốc độ đếm
+                    const updateCount = () => {
+                        const count = +counter.innerText;
+                        const inc = target / speed;
+                        if (count < target) {
+                            counter.innerText = Math.ceil(count + inc);
+                            setTimeout(updateCount, 15);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    updateCount();
+                });
+            };
+
+            const statsSection = document.getElementById('stats');
+            if(statsSection) {
+                const counterObserver = new IntersectionObserver((entries) => {
+                    const entry = entries[0];
+                    if(entry.isIntersecting && !hasCounted) {
+                        countUp();
+                        hasCounted = true;
+                    }
+                }, { threshold: 0.5 });
+                counterObserver.observe(statsSection);
+            }
+
+            // --- 7. Food Detail Modal Logic ---
+            const foodModal = document.getElementById('food-modal');
+            const closeFoodBtn = document.getElementById('close-food-modal');
+            const detailButtons = document.querySelectorAll('.btn-detail');
+
+            // Modal Elements
+            const mTitle = document.getElementById('modal-title');
+            const mImg = document.getElementById('modal-img');
+            const mDesc = document.getElementById('modal-desc');
+            const mOrigin = document.getElementById('modal-origin');
+            const mRecipe = document.getElementById('modal-recipe');
+
+            if(detailButtons.length > 0 && foodModal) {
+                detailButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        // Get data
+                        const { name, img, desc, origin, recipe } = btn.dataset;
+                        // Set data
+                        mTitle.textContent = name || 'Chưa cập nhật';
+                        mImg.src = img || '';
+                        mDesc.textContent = desc || '';
+                        mOrigin.textContent = origin || '';
+                        mRecipe.textContent = recipe || '';
+                        
+                        // Show Modal
+                        foodModal.classList.add('active');
+                        document.body.classList.add('no-scroll');
+                    });
+                });
+
+                // Close Logic
+                const closeFoodModal = () => {
+                    foodModal.classList.remove('active');
+                    document.body.classList.remove('no-scroll');
+                };
+
+                closeFoodBtn.addEventListener('click', closeFoodModal);
+                
+                // Click outside to close
+                foodModal.addEventListener('click', (e) => {
+                    if (e.target === foodModal) closeFoodModal();
+                });
+            }
+
+            // --- 8. Gallery Fullscreen Modal ---
+            const galleryModal = document.getElementById('gallery-modal');
+            const galleryImgFull = document.getElementById('gallery-full-img');
+            const closeGalleryBtn = document.getElementById('close-gallery-modal');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+
+            if(galleryItems.length > 0 && galleryModal) {
+                galleryItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const imgSrc = item.getAttribute('data-img');
+                        galleryImgFull.src = imgSrc;
+                        galleryModal.classList.add('active');
+                        document.body.classList.add('no-scroll');
+                    });
+                });
+
+                const closeGalleryModal = () => {
+                    galleryModal.classList.remove('active');
+                    document.body.classList.remove('no-scroll');
+                };
+
+                closeGalleryBtn.addEventListener('click', closeGalleryModal);
+                galleryModal.addEventListener('click', (e) => {
+                    if(e.target === galleryModal) closeGalleryModal();
+                });
+            }
+
+            // --- 9. Fake Form Submission ---
+            const contactForm = document.getElementById('contact-form');
+            const formMessage = document.getElementById('form-message');
+
+            if(contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault(); // Prevent page reload
+                    
+                    const btnSubmit = contactForm.querySelector('.btn-submit');
+                    const originalText = btnSubmit.textContent;
+                    
+                    // Button UI loading state
+                    btnSubmit.textContent = 'Đang gửi...';
+                    btnSubmit.disabled = true;
+
+                    // Fake network request
+                    setTimeout(() => {
+                        formMessage.style.display = 'block';
+                        contactForm.reset();
+                        btnSubmit.textContent = originalText;
+                        btnSubmit.disabled = false;
+                        
+                        // Hide message after 5s
+                        setTimeout(() => {
+                            formMessage.style.display = 'none';
+                        }, 5000);
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
